@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="refresh" content="10">
+    <title>chat</title>
+    
+
+    <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet">
+    <link href="css/font-awesome.min.css" rel="stylesheet">
+    <link href="css/animate.min.css" rel="stylesheet">
+    <link href="css/prettyPhoto.css" rel="stylesheet">
+  
+    <link href="css/responsive.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/chat-client.css">
+    <link href="css/main.css" rel="stylesheet">
+    <style>
+
+    </style>
+</head>
+<body>
+
+
+   	<header id="main_header">
+
+        <li><a href="index.html"><span id="tuichu" style="font-size: 4px" class="mb-lg-2">退出</span></a></li>
+			</header><!--/header-->
+
+      
+            <section id="chat_main" class="chat_body">
+                 
+      
+                    <div class="container chat_main  center-block">
+                      
+                      <div class="container chat_header">
+                        <img src="image/bg7.png">
+                       学习交流
+                      </div>
+                      <div class="container">
+                          <div class="row">
+                      <!-- <div id="chat_container"> -->
+                        <div class="conversation  col-md-7 col-sm-12">
+                            <ul id="messages"></ul>
+                            <form class="chat_form" action="">
+                                <div class="edit row" > 
+
+                                  <input type="color" id="color" value="#000000">
+                                  <i title="自定义字体颜色" id="font" class="fa fa-font">
+                                  </i>
+                                  <i title="双击取消选择" id="smile" class="fa fa-smile-o">
+                                  </i>
+                                  <i title="单击页面震动" id="shake" class="fa fa-bolt">
+                                  </i> 
+                                 
+                                  <!-- <input type="file" id="file">  
+                                 <i title="选择发送图片" class="fa fa-picture-o" id="img"></i>     -->
+                                                           
+                                  <div class="selectBox"> 
+                                    <div class="smile" id="smileDiv"> 
+                                      <p>经典表情</p>
+                                      <ul class="emoji"></ul>
+                                    </div> 
+                                  </div>
+                                </div>
+                                 <!-- autocomplete禁用自动完成功能  -->
+                                <textarea id="m" autofocus></textarea>
+                                <button class="btn" id="sub">发送</button>
+                                <button class="rBtn"οnclick="javascript:history.back();" > <a style="color: white;" href="index.html" >关闭</a> </button>
+                            </form>
+                        </div>
+                        
+                        <div class="contacts col-md-5 col-sm-12">
+                            <h1>在线人员</h1>
+                            <ul id="users"></ul>
+                            <p id="person"></p>
+                          </div>
+
+                        </div>
+
+
+                      </div>
+                    </div> 
+                  <!-- </div> -->
+                </div>
+            </section>
+            <section id="bottom">
+                <div id="bottom2" class="container wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms">
+                   
+                </div>
+            </section>
+            
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/qi/jquery.js"></script>
+    <script src="js/qi/bootstrap.min.js"></script>
+    <script src="js/jquery.prettyPhoto.js"></script>
+    <script src="js/jquery.isotope.min.js"></script>
+    <script src="js/qi/main.js"></script>
+    <script src="js/wow.min.js"></script>
+    <script src="js/chat-client.js"></script>
+
+    <script>
+        $(window).load(function () {
+            let uname = decodeURI(location.href).split('=')[1];
+            let html=''
+            if(uname!=null)
+            {
+                $.ajax({
+                    method:'GET',
+                    url:'http://localhost:5050/liaotian?uname='+uname,
+                    success:function (data) {
+                        console.log(data);
+                        if(data.code==10) {
+                            alert("不对");
+                        }
+
+                    }
+                })
+                $.ajax({
+                    method:'GET',
+                    url:'http://localhost:5050/zaixian',
+                    success:function (data) {
+                        for(let i=0;i<data.length;i++)
+                        {
+                            html+= `<button onclick="ch()">${data[i].username}</button><br><br>`
+
+                        }
+                        $('#person').html(html);
+                    }
+                })
+                $.ajax({
+                    method:'GET',
+                    url:'http://localhost:5050/chat1',
+                    success:function (data) {
+                        let html=''
+                        for(let i=0;i<data.length;i++)
+                        {
+                            html+=`<li><span class="icon icon-person mt-1"></span></li>
+                <li><img src="image/rentou.png"/>${data[i].username}</li><br>
+                                         <div>${data[i].yu}</div>`
+                        }
+                        $('#messages').html(html)
+                    }
+                })
+            }
+        })
+        $('#tuichu').click(function(){
+            let uname = decodeURI(location.href).split('=')[1];
+            $.ajax({
+                method:'GET',
+                url:'http://localhost:5050/tuichu?uname='+uname,
+                success:function (data) {
+                    if(data.code==200)
+                    {
+                        alert('退出聊天室成功！');
+                    }
+                }
+            })
+        })
+        $('#sub').click(function(){
+            let uname = decodeURI(location.href).split('=')[1];
+            let yu=$('#m').val();
+            $.ajax({
+                method:'GET',
+                url:'http://localhost:5050/chat?uname='+uname+'=yu='+yu,
+                success:function (data) {
+                        window.location.href='chat.html?uname='+uname;
+                }
+            })
+            alert('发送成功')
+        })
+        function ch()
+        {
+            let uname = decodeURI(location.href).split('=')[1];
+            window.location.href='chat1.html?uname='+uname;
+        }
+    </script>
+</body>
+</html>

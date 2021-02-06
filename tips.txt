@@ -1,0 +1,5 @@
+1、在webstorm中导入项目。
+2、导入数据库信息。
+3、在cmd下定位到项目路径，再用node app.js打开服务。
+4、在浏览器中打开http://localhost:5050/public/index.html（默认首页网址）
+详情可看演示视频。
